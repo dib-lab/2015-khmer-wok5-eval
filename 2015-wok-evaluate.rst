@@ -1,6 +1,12 @@
 Comparing and evaluating assembly with graph alignment
 ======================================================
 
+:author: \C. Titus Brown, Camille Scott, Michael R. Crusoe
+:tags: khmer,wok,graphalign,evaluation
+:date: 2015-05-22
+:slug: 2015-wok-evaluate
+:category: science
+
 One of our long-term interests has been in figuring out what the
 !$!$!#!#%!  assemblers actually do to real data, given all their
 heuristics.  A continuing challenge in this space is that short-read
@@ -13,18 +19,18 @@ reads to graphs
 <http://ivory.idyll.org/blog/2015-wok-error-correction.html>`__ can
 help us explore assemblies in a variety of ways.
 
-The two challenges are *noisy data* and *lots of data*.  When (for
-example) looking at what fraction of reads has been incorporated into
-an assembly, noise causes problems because a read may have been corrected
-during assembly.  This is where graph alignment comes in handy, because
-we can use it to align reads to the full graph and get rid of much of this
-noise.  Lots of data complicates things because it's very hard to look
-at reads individually - you need to treat them in aggregate, and it's
-much easier just to look at the reads that match to your assembly than
-to investigate the oddball reads that don't assemble.  And this is where
-the combination of graph alignment and labeling helps, because it's easy
-to count and extract reads based on overlaps with labels, as well as to
-summarize those overlaps.
+The two basic challenges are *noisy data* and *lots of data*.  When
+(for example) looking at what fraction of reads has been incorporated
+into an assembly, noise causes problems because a read may have been
+corrected during assembly.  This is where graph alignment comes in
+handy, because we can use it to align reads to the full graph and get
+rid of much of this noise.  Lots of data complicates things because
+it's very hard to look at reads individually - you need to treat them
+in aggregate, and it's much easier just to look at the reads that
+match to your assembly than to investigate the oddball reads that
+don't assemble.  And this is where the combination of graph alignment
+and labeling helps, because it's easy to count and extract reads based
+on overlaps with labels, as well as to summarize those overlaps.
 
 The main question we will be asking below is: can we measure overlaps
 and disjoint components in *graph extents*, that is, in unique
@@ -103,7 +109,9 @@ we've been using `in previous blog posts
 when we look at the reads?"  (Note, the mouse transcriptome was not
 generated from this data set; this is the reference transcriptome.)
 
-The answer (target 'rna-compare-noalign.txt' in the `Makefile
+The answer (target `rna-compare-noalign.txt
+<https://github.com/dib-lab/2015-khmer-wok5-eval/blob/master/rna-compare-noalign.txt>`__
+in the `Makefile
 <https://github.com/dib-lab/2015-khmer-wok5-eval/blob/master/Makefile>`__)
 is::
 
@@ -117,7 +125,7 @@ About 12.5% of the reads in (B; 80646 / 644963) don't pick up tags in
 the official reference transcriptome (A).
 
 Interestingly, the results with alignment are essentially the same
-(target 'rna-compare-align.txt')::
+(target `rna-compare-align.txt <https://github.com/dib-lab/2015-khmer-wok5-eval/blob/master/rna-compare-align.txt>`__)::
 
    all tags: 1958219
    n tags in A: 1877685
@@ -125,8 +133,10 @@ Interestingly, the results with alignment are essentially the same
    tags in A but not in B 1314564
    tags in B but not in A 80534
 
-suggesting that, by and large, these reads are disjoint from the existing
-assembly, and not mere sequencing errors.
+suggesting that, by and large, these reads are disjoint from the
+existing assembly, and not mere sequencing errors.  (This may be
+because we require that the entire read be mappable to the graph in
+order to count it, though.)
 
 Evaluating trimming
 -------------------
@@ -149,8 +159,9 @@ Suppose we do a stringent round of trimming on our RNAseq (Trimmomatic
 SLIDINGWINDOW:4:30) - what do we lose?
 
 On this low coverage data set, where A is the graph formed from the
-trimmed reads and B is the graph from the raw reads, we see
-(target 'rseq-hardtrim-ba-noalign.txt')::
+trimmed reads and B is the graph from the raw reads, we see (target
+`rseq-hardtrim-ba-noalign.txt
+<https://github.com/dib-lab/2015-khmer-wok5-eval/blob/master/rseq-hardtrim-ba-noalign.txt>`__)::
 
    all tags: 588615
    n tags in A: 518980
@@ -160,7 +171,10 @@ trimmed reads and B is the graph from the raw reads, we see
 
 we see about 12% of the sparse nodes missing from the trimmed data.
 
-If we run the read aligner with a low coverage cutoff (target 'rseq-hardtrim-ba-align1.txt'), we see::
+If we run the read aligner with a low coverage cutoff (target
+`rseq-hardtrim-ba-align1.txt
+<https://github.com/dib-lab/2015-khmer-wok5-eval/blob/master/rseq-hardtrim-ba-align1.txt>`__),
+we see::
 
    all tags: 569280
    n tags in A: 519396
@@ -174,8 +188,8 @@ half that (7,500) for reasons that we don't entirely understand
 (wiggle in the graph aligner?)
 
 We have no firm conclusions here, except to say that this should be a
-way to evaluate the effect of different trimming on graph extent.  It
-will be fun to play with!
+way to evaluate the effect of different trimming on graph extent, which
+*should* be more reliable than looking at the effect on assemblies.
 
 Notes and miscellany
 --------------------
@@ -184,7 +198,8 @@ Notes and miscellany
   correct for the density of tags, we can apply these approaches to
   genomes, metagenomes, and transcriptomes.
 
-* It's actually very easy to extract the reads that do or don't match.
+* It's actually very easy to extract the reads that do or don't match,
+  but our current scripts don't let us do so based on labels.
 
 * We aren't really using the labeling here, just the tagging - but
   labeling can enable n-way comparisons between e.g. different
