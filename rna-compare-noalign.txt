@@ -1,0 +1,5 @@
+all tags: 1959121
+n tags in A: 1878475
+n tags in B: 644963
+tags in A but not in B 1314158
+tags in B but not in A 80646
